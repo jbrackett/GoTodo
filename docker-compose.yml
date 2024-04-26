@@ -1,0 +1,27 @@
+version: "3"
+
+services:
+  postgres_go:
+    image: postgres:16-alpine
+    container_name: postgres_go
+    ports:
+      - "5433:5432"
+    restart: always
+    healthcheck:
+      test: [ “CMD-SHELL”, “pg_isready” ]
+      interval: 1s
+      timeout: 5s
+      retries: 10
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: sampleUser
+  gotodo:
+    image: gotodo:latest
+    container_name: gotodo
+    restart: always
+    ports:
+      - "1323:1323"
+    depends_on:
+      - postgres_go
+    env_file:
+      - local.env
